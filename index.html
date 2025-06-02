@@ -1,512 +1,500 @@
-‏```html
-‏<!DOCTYPE html>
-‏<html lang="he" dir="rtl">
-‏<head>
-‏    <meta charset="UTF-8">
-‏    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-‏    <title>הפינה של רונן - 30 שנה של שירות מעולה | הזמנות אונליין</title>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הפינה של רונן - 30 שנה של שירות מעולה | הזמנות אונליין</title>
     
-‏    <meta name="description" content="הפינה של רונן - 30 שנה של שירות מעולה ברעננה! הזמנות אונליין מתקדמות, משלוחים מהירים תוך 15 דקות. קלאוזנר 2, רעננה. טל: 050-821-1254">
+    <meta name="description" content="הפינה של רונן - 30 שנה של שירות מעולה ברעננה! הזמנות אונליין מתקדמות, משלוחים מהירים תוך 15 דקות. קלאוזנר 2, רעננה. טל: 050-821-1254">
     
-‏    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-‏    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     
-‏    <style>
-‏        * { font-family: 'Assistant', sans-serif; }
+    <style>
+        * { font-family: 'Assistant', sans-serif; }
         
-‏        .floating-whatsapp {
-‏            position: fixed;
-‏            bottom: 20px;
-‏            left: 20px;
-‏            z-index: 1000;
-‏            animation: bounce 2s infinite;
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            animation: bounce 2s infinite;
         }
         
-‏        .floating-cart {
-‏            position: fixed;
-‏            bottom: 100px;
-‏            left: 20px;
-‏            z-index: 1000;
-‏            animation: pulse 2s infinite;
+        .floating-cart {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
         }
         
-‏        @keyframes bounce {
-‏            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-‏            40%, 43% { transform: translateY(-10px); }
-‏            70% { transform: translateY(-5px); }
+        .floating-admin {
+            position: fixed;
+            bottom: 180px;
+            left: 20px;
+            z-index: 1000;
         }
         
-‏        @keyframes pulse {
-‏            0%, 100% { transform: scale(1); }
-‏            50% { transform: scale(1.05); }
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-10px); }
+            70% { transform: translateY(-5px); }
         }
         
-‏        .product-card {
-‏            transition: all 0.3s ease;
-‏            border: 2px solid transparent;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
-‏        .product-card:hover {
-‏            transform: translateY(-8px);
-‏            box-shadow: 0 25px 50px rgba(220, 38, 38, 0.2);
-‏            border-color: #dc2626;
+        .product-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
         
-‏        .cart-sidebar {
-‏            position: fixed;
-‏            top: 0;
-‏            right: -400px;
-‏            width: 400px;
-‏            height: 100vh;
-‏            background: white;
-‏            box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-‏            transition: right 0.3s ease;
-‏            z-index: 1000;
-‏            overflow-y: auto;
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(220, 38, 38, 0.2);
+            border-color: #dc2626;
         }
         
-‏        .cart-sidebar.open { right: 0; }
-        
-‏        .cart-overlay {
-‏            position: fixed;
-‏            top: 0;
-‏            left: 0;
-‏            width: 100vw;
-‏            height: 100vh;
-‏            background: rgba(0,0,0,0.5);
-‏            z-index: 999;
-‏            opacity: 0;
-‏            visibility: hidden;
-‏            transition: all 0.3s ease;
+        .cart-sidebar, .admin-sidebar {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100vh;
+            background: white;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
         }
         
-‏        .cart-overlay.open {
-‏            opacity: 1;
-‏            visibility: visible;
+        .cart-sidebar.open, .admin-sidebar.open { right: 0; }
+        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
         
-‏        @media (max-width: 768px) {
-‏            .cart-sidebar {
-‏                width: 100vw;
-‏                right: -100vw;
+        .cart-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-sidebar, .admin-sidebar {
+                width: 100vw;
+                right: -100vw;
             }
         }
-‏    </style>
-‏</head>
-‏<body class="bg-gray-50">
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10B981;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
 
-‏    <!-- WhatsApp Button -->
-‏    <a href="https://wa.me/972508211254?text=שלום%20רונן,%20אני%20רוצה%20לבצע%20הזמנה" 
-‏       class="floating-whatsapp bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-colors" 
-‏       target="_blank">
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/972508211254?text=שלום%20רונן,%20אני%20רוצה%20לבצע%20הזמנה" 
+       class="floating-whatsapp bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-colors" 
+       target="_blank">
         📱
-‏    </a>
+    </a>
 
-‏    <!-- Cart Button -->
-‏    <button onclick="toggleCart()" class="floating-cart bg-red-600 text-white p-4 rounded-full shadow-2xl hover:bg-red-700 transition-colors relative">
+    <!-- Cart Button -->
+    <button onclick="toggleCart()" class="floating-cart bg-red-600 text-white p-4 rounded-full shadow-2xl hover:bg-red-700 transition-colors relative">
         🛒
-‏        <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-red-600 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center" style="display: none;">0</span>
-‏    </button>
+        <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-red-600 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center" style="display: none;">0</span>
+    </button>
 
-‏    <!-- Cart Overlay -->
-‏    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <!-- Admin Button -->
+    <button onclick="toggleAdmin()" class="floating-admin bg-purple-600 text-white p-4 rounded-full shadow-2xl hover:bg-purple-700 transition-colors">
+        ⚙️
+    </button>
 
-‏    <!-- Cart Sidebar -->
-‏    <div id="cart-sidebar" class="cart-sidebar">
-‏        <div class="p-6 border-b border-gray-200 bg-red-600 text-white">
-‏            <div class="flex justify-between items-center">
-‏                <h3 class="text-2xl font-bold">🛒 עגלת הקניות</h3>
-‏                <button onclick="toggleCart()" class="text-white text-3xl">×</button>
-‏            </div>
-‏            <div class="mt-4 bg-orange-500 p-3 rounded-lg">
+    <!-- Overlays -->
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <div id="admin-overlay" class="cart-overlay" onclick="toggleAdmin()"></div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="p-6 border-b border-gray-200 bg-red-600 text-white">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-bold">🛒 עגלת הקניות</h3>
+                <button onclick="toggleCart()" class="text-white text-3xl">×</button>
+            </div>
+            <div class="mt-4 bg-orange-500 p-3 rounded-lg">
                 ⚡ משלוח מהיר תוך 15 דקות!
-‏            </div>
-‏        </div>
+            </div>
+        </div>
         
-‏        <div class="bg-purple-100 p-4">
-‏            <h4 class="font-bold text-lg mb-2">🎉 הצעה מיוחדת!</h4>
-‏            <p class="text-sm">משלוח חינם להזמנות מעל ₪80</p>
-‏        </div>
+        <div class="bg-purple-100 p-4">
+            <h4 class="font-bold text-lg mb-2">🎉 הצעה מיוחדת!</h4>
+            <p class="text-sm">משלוח חינם להזמנות מעל ₪80</p>
+        </div>
         
-‏        <div id="cart-items" class="p-6 flex-1">
-‏            <div class="text-center text-gray-500 py-8">
-‏                <div class="text-6xl mb-4">🛒</div>
-‏                <p class="text-lg">העגלה שלך ריקה</p>
-‏                <p class="text-sm">הוסף מוצרים כדי להתחיל</p>
-‏            </div>
-‏        </div>
+        <div id="cart-items" class="p-6 flex-1">
+            <div class="text-center text-gray-500 py-8">
+                <div class="text-6xl mb-4">🛒</div>
+                <p class="text-lg">העגלה שלך ריקה</p>
+                <p class="text-sm">הוסף מוצרים כדי להתחיל</p>
+            </div>
+        </div>
         
-‏        <div id="cart-footer" class="p-6 border-t border-gray-200 bg-gray-50" style="display: none;">
-‏            <div class="space-y-4">
-‏                <div class="bg-white p-4 rounded-lg">
-‏                    <h4 class="font-bold mb-3">🚚 אפשרויות משלוח</h4>
-‏                    <div class="space-y-2">
-‏                        <label class="flex items-center">
-‏                            <input type="radio" name="delivery" value="express" checked>
-‏                            <span class="mr-2">משלוח מהיר (15 דק') - ₪10</span>
-‏                        </label>
-‏                        <label class="flex items-center">
-‏                            <input type="radio" name="delivery" value="standard">
-‏                            <span class="mr-2">משלוח רגיל (30 דק') - ₪5</span>
-‏                        </label>
-‏                        <label class="flex items-center">
-‏                            <input type="radio" name="delivery" value="pickup">
-‏                            <span class="mr-2">איסוף עצמי - חינם</span>
-‏                        </label>
-‏                    </div>
-‏                </div>
+        <div id="cart-footer" class="p-6 border-t border-gray-200 bg-gray-50" style="display: none;">
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">🚚 אפשרויות משלוח</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="delivery" value="express" checked onchange="updateDelivery()">
+                            <span class="mr-2">משלוח מהיר (15 דק') - ₪10</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="delivery" value="standard" onchange="updateDelivery()">
+                            <span class="mr-2">משלוח רגיל (30 דק') - ₪5</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="delivery" value="pickup" onchange="updateDelivery()">
+                            <span class="mr-2">איסוף עצמי - חינם</span>
+                        </label>
+                    </div>
+                </div>
                 
-‏                <div class="bg-white p-4 rounded-lg space-y-2">
-‏                    <div class="flex justify-between">
-‏                        <span>סכום מוצרים:</span>
-‏                        <span id="subtotal">₪0</span>
-‏                    </div>
-‏                    <div class="flex justify-between">
-‏                        <span>משלוח:</span>
-‏                        <span id="delivery-cost">₪10</span>
-‏                    </div>
-‏                    <hr>
-‏                    <div class="flex justify-between text-xl font-bold text-red-600">
-‏                        <span>סה"כ:</span>
-‏                        <span id="cart-total">₪0</span>
-‏                    </div>
-‏                </div>
+                <div class="bg-white p-4 rounded-lg space-y-2">
+                    <div class="flex justify-between">
+                        <span>סכום מוצרים:</span>
+                        <span id="subtotal">₪0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>משלוח:</span>
+                        <span id="delivery-cost">₪10</span>
+                    </div>
+                    <hr>
+                    <div class="flex justify-between text-xl font-bold text-red-600">
+                        <span>סה"כ:</span>
+                        <span id="cart-total">₪0</span>
+                    </div>
+                </div>
                 
-‏                <button onclick="checkout()" class="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:bg-red-700 transition-colors">
+                <button onclick="checkout()" class="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:bg-red-700 transition-colors">
                     💳 המשך להזמנה
-‏                </button>
+                </button>
                 
-‏                <button onclick="clearCart()" class="w-full bg-gray-300 text-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-400 transition-colors">
+                <button onclick="clearCart()" class="w-full bg-gray-300 text-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-400 transition-colors">
                     🗑️ רוקן עגלה
-‏                </button>
-‏            </div>
-‏        </div>
-‏    </div>
+                </button>
+            </div>
+        </div>
+    </div>
 
-‏    <!-- Header -->
-‏    <header class="bg-white shadow-lg sticky top-0 z-30">
-‏        <div class="container mx-auto px-4 py-4">
-‏            <div class="flex justify-between items-center">
-‏                <div class="flex items-center space-x-4 space-x-reverse">
-‏                    <div class="text-4xl">🏪</div>
-‏                    <div>
-‏                        <h1 class="text-3xl font-bold text-red-600">הפינה של רונן</h1>
-‏                        <p class="text-sm text-gray-600">30 שנה של שירות מעולה • 050-821-1254</p>
-‏                    </div>
-‏                </div>
+    <!-- Admin Sidebar -->
+    <div id="admin-sidebar" class="admin-sidebar">
+        <div class="p-6 border-b border-gray-200 bg-purple-600 text-white">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-bold">⚙️ ניהול החנות</h3>
+                <button onclick="toggleAdmin()" class="text-white text-3xl">×</button>
+            </div>
+        </div>
+        
+        <div class="p-6 space-y-6">
+            <!-- Add Product Form -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold mb-4 text-purple-600">➕ הוסף מוצר חדש</h4>
+                <form id="add-product-form" class="space-y-4">
+                    <input type="text" id="product-name" placeholder="שם המוצר" class="w-full p-3 border rounded-lg" required>
+                    <input type="number" id="product-price" placeholder="מחיר (₪)" class="w-full p-3 border rounded-lg" required>
+                    <select id="product-category" class="w-full p-3 border rounded-lg" required>
+                        <option value="">בחר קטגוריה</option>
+                        <option value="חטיפים">🍿 חטיפים</option>
+                        <option value="שתיה מתוקה">🥤 שתיה מתוקה</option>
+                        <option value="שתיה חריפה">🍺 שתיה חריפה</option>
+                        <option value="סיגריות">🚬 סיגריות</option>
+                        <option value="מארזים לחג וימי הולדת">🎁 מארזים</option>
+                        <option value="בלונים וכו">🎈 בלונים</option>
+                    </select>
+                    <input type="text" id="product-emoji" placeholder="אימוג'י (🍿)" class="w-full p-3 border rounded-lg" maxlength="2">
+                    <textarea id="product-description" placeholder="תיאור המוצר" class="w-full p-3 border rounded-lg" rows="3"></textarea>
+                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
+                        ➕ הוסף מוצר
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Products Management -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold mb-4 text-purple-600">📝 ערוך מוצרים קיימים</h4>
+                <div id="admin-products-list" class="space-y-3 max-h-96 overflow-y-auto">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Store Stats -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold mb-4 text-purple-600">📊 סטטיסטיקות</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600" id="total-products">0</div>
+                        <div class="text-sm text-gray-600">מוצרים פעילים</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="total-orders">0</div>
+                        <div class="text-sm text-gray-600">הזמנות היום</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-30">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <div class="text-4xl">🏪</div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-red-600">הפינה של רונן</h1>
+                        <p class="text-sm text-gray-600">30 שנה של שירות מעולה • 050-821-1254</p>
+                    </div>
+                </div>
                 
-‏                <div class="flex items-center space-x-4 space-x-reverse">
-‏                    <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
-‏                       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-‏                        🗺️ Waze
-‏                    </a>
-‏                    <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
-‏                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-‏                        🗺️ Maps
-‏                    </a>
-‏                </div>
-‏            </div>
-‏        </div>
-‏    </header>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
+                       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        🗺️ Waze
+                    </a>
+                    <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
+                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        🗺️ Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-‏    <!-- Hero Section -->
-‏    <section class="py-20 bg-gradient-to-r from-red-600 to-orange-600 text-white">
-‏        <div class="container mx-auto px-4 text-center">
-‏            <h2 class="text-5xl font-bold mb-6">ברוכים הבאים לפינה של רונן</h2>
-‏            <p class="text-2xl mb-8">30 שנה של שירות מעולה ברעננה!</p>
-‏            <p class="text-lg mb-8">📍 קלאוזנר 2, רעננה • 📞 050-821-1254</p>
+    <!-- Hero Section -->
+    <section class="py-20 bg-gradient-to-r from-red-600 to-orange-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-bold mb-6">ברוכים הבאים לפינה של רונן</h2>
+            <p class="text-2xl mb-8">30 שנה של שירות מעולה ברעננה!</p>
+            <p class="text-lg mb-8">📍 קלאוזנר 2, רעננה • 📞 050-821-1254</p>
             
-‏            <div class="grid md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
-‏                <div class="bg-white/20 p-6 rounded-lg">
-‏                    <div class="text-4xl mb-4">🍿</div>
-‏                    <h3 class="font-bold">חטיפים</h3>
-‏                    <p class="text-sm">מגוון ענק</p>
-‏                </div>
-‏                <div class="bg-white/20 p-6 rounded-lg">
-‏                    <div class="text-4xl mb-4">🥤</div>
-‏                    <h3 class="font-bold">משקאות</h3>
-‏                    <p class="text-sm">קרים וחריפים</p>
-‏                </div>
-‏                <div class="bg-white/20 p-6 rounded-lg">
-‏                    <div class="text-4xl mb-4">🎁</div>
-‏                    <h3 class="font-bold">מארזים</h3>
-‏                    <p class="text-sm">לכל אירוע</p>
-‏                </div>
-‏                <div class="bg-white/20 p-6 rounded-lg">
-‏                    <div class="text-4xl mb-4">⭐</div>
-‏                    <h3 class="font-bold">איכות</h3>
-‏                    <p class="text-sm">30 שנות ניסיון</p>
-‏                </div>
-‏            </div>
+            <div class="grid md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
+                <div class="bg-white/20 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">🍿</div>
+                    <h3 class="font-bold">חטיפים</h3>
+                    <p class="text-sm">מגוון ענק</p>
+                </div>
+                <div class="bg-white/20 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">🥤</div>
+                    <h3 class="font-bold">משקאות</h3>
+                    <p class="text-sm">קרים וחריפים</p>
+                </div>
+                <div class="bg-white/20 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">🎁</div>
+                    <h3 class="font-bold">מארזים</h3>
+                    <p class="text-sm">לכל אירוע</p>
+                </div>
+                <div class="bg-white/20 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">⭐</div>
+                    <h3 class="font-bold">איכות</h3>
+                    <p class="text-sm">30 שנות ניסיון</p>
+                </div>
+            </div>
             
-‏            <div class="flex gap-4 justify-center">
-‏                <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" 
-‏                        class="bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
+            <div class="flex gap-4 justify-center">
+                <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" 
+                        class="bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
                     🛒 התחל לקנות עכשיו
-‏                </button>
-‏                <a href="tel:050-821-1254" 
-‏                   class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-red-600 transition-colors">
+                </button>
+                <a href="tel:050-821-1254" 
+                   class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-red-600 transition-colors">
                     📞 התקשר עכשיו
-‏                </a>
-‏            </div>
-‏        </div>
-‏    </section>
+                </a>
+            </div>
+        </div>
+    </section>
 
-‏    <!-- Products Section -->
-‏    <section id="products" class="py-16 bg-white">
-‏        <div class="container mx-auto px-4">
-‏            <h2 class="text-4xl font-bold text-center mb-12">🛍️ המוצרים שלנו</h2>
+    <!-- Products Section -->
+    <section id="products" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">🛍️ המוצרים שלנו</h2>
             
-‏            <!-- Categories -->
-‏            <div class="flex gap-2 flex-wrap justify-center mb-8">
-‏                <button onclick="filterByCategory('הכל')" class="category-btn px-6 py-3 rounded-full font-medium bg-red-600 text-white">
+            <!-- Categories -->
+            <div class="flex gap-2 flex-wrap justify-center mb-8">
+                <button onclick="filterByCategory('הכל')" class="category-btn px-6 py-3 rounded-full font-medium bg-red-600 text-white">
                     🛍️ הכל
-‏                </button>
-‏                <button onclick="filterByCategory('חטיפים')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('חטיפים')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🍿 חטיפים
-‏                </button>
-‏                <button onclick="filterByCategory('שתיה מתוקה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('שתיה מתוקה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🥤 שתיה מתוקה
-‏                </button>
-‏                <button onclick="filterByCategory('שתיה חריפה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('שתיה חריפה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🍺 שתיה חריפה
-‏                </button>
-‏                <button onclick="filterByCategory('סיגריות')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('סיגריות')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🚬 סיגריות
-‏                </button>
-‏                <button onclick="filterByCategory('מארזים לחג וימי הולדת')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('מארזים לחג וימי הולדת')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🎁 מארזים
-‏                </button>
-‏                <button onclick="filterByCategory('בלונים וכו')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                </button>
+                <button onclick="filterByCategory('בלונים וכו')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
                     🎈 בלונים
-‏                </button>
-‏            </div>
+                </button>
+            </div>
             
-‏            <!-- Products Grid -->
-‏            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-‏                <!-- Products will be loaded here -->
-‏            </div>
-‏        </div>
-‏    </section>
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
 
-‏    <!-- About Section -->
-‏    <section id="about" class="py-16 bg-gray-50">
-‏        <div class="container mx-auto px-4">
-‏            <div class="max-w-4xl mx-auto text-center">
-‏                <h2 class="text-4xl font-bold mb-8">🏆 אודות הפינה של רונן</h2>
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-8">🏆 אודות הפינה של רונן</h2>
                 
-‏                <div class="bg-white rounded-3xl p-8 shadow-lg">
-‏                    <div class="text-6xl mb-6">🏪</div>
-‏                    <h3 class="text-3xl font-bold text-red-600 mb-6">30 שנה של מסורת ואיכות</h3>
+                <div class="bg-white rounded-3xl p-8 shadow-lg">
+                    <div class="text-6xl mb-6">🏪</div>
+                    <h3 class="text-3xl font-bold text-red-600 mb-6">30 שנה של מסורת ואיכות</h3>
                     
-‏                    <p class="text-xl leading-relaxed text-gray-700 mb-8">
+                    <p class="text-xl leading-relaxed text-gray-700 mb-8">
                         מזה <strong class="text-red-600">30 שנה</strong>, הפינה של רונן מספקת שירות מעולה לתושבי רעננה והסביבה. 
                         אנחנו מתמחים במתן שירות ברמה הגבוהה ביותר עם מוצרים איכותיים במחירים הוגנים והגיוניים.
-‏                    </p>
+                    </p>
                     
-‏                    <div class="grid md:grid-cols-2 gap-8">
-‏                        <div class="bg-red-50 rounded-2xl p-6">
-‏                            <h4 class="text-xl font-bold text-red-600 mb-4">🛍️ המוצרים שלנו</h4>
-‏                            <ul class="text-right space-y-2 text-gray-700">
-‏                                <li>🍿 חטיפים מגוון רחב</li>
-‏                                <li>🥤 שתיה קרה מרעננת</li>
-‏                                <li>🍺 שתיה חריפה איכותית</li>
-‏                                <li>🚬 סיגריות ומותגים מובילים</li>
-‏                                <li>🎈 בלונים וקישוטים</li>
-‏                                <li>🎁 מארזים מיוחדים לכל אירוע</li>
-‏                            </ul>
-‏                        </div>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-red-50 rounded-2xl p-6">
+                            <h4 class="text-xl font-bold text-red-600 mb-4">🛍️ המוצרים שלנו</h4>
+                            <ul class="text-right space-y-2 text-gray-700">
+                                <li>🍿 חטיפים מגוון רחב</li>
+                                <li>🥤 שתיה קרה מרעננת</li>
+                                <li>🍺 שתיה חריפה איכותית</li>
+                                <li>🚬 סיגריות ומותגים מובילים</li>
+                                <li>🎈 בלונים וקישוטים</li>
+                                <li>🎁 מארזים מיוחדים לכל אירוע</li>
+                            </ul>
+                        </div>
                         
-‏                        <div class="bg-orange-50 rounded-2xl p-6">
-‏                            <h4 class="text-xl font-bold text-orange-600 mb-4">🌟 מה מייחד אותנו</h4>
-‏                            <ul class="text-right space-y-2 text-gray-700">
-‏                                <li>🏆 30 שנות ניסיון ומקצועיות</li>
-‏                                <li>💎 מוצרים איכותיים בלבד</li>
-‏                                <li>💰 מחירים הוגנים והגיוניים</li>
-‏                                <li>😊 שירות ברמה גבוהה</li>
-‏                                <li>📍 מיקום נוח בלב רעננה</li>
-‏                                <li>⚡ שירות מהיר ואמין</li>
-‏                            </ul>
-‏                        </div>
-‏                    </div>
-‏                </div>
-‏            </div>
-‏        </div>
-‏    </section>
+                        <div class="bg-orange-50 rounded-2xl p-6">
+                            <h4 class="text-xl font-bold text-orange-600 mb-4">🌟 מה מייחד אותנו</h4>
+                            <ul class="text-right space-y-2 text-gray-700">
+                                <li>🏆 30 שנות ניסיון ומקצועיות</li>
+                                <li>💎 מוצרים איכותיים בלבד</li>
+                                <li>💰 מחירים הוגנים והגיוניים</li>
+                                <li>😊 שירות ברמה גבוהה</li>
+                                <li>📍 מיקום נוח בלב רעננה</li>
+                                <li>⚡ שירות מהיר ואמין</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-‏    <!-- Contact Section -->
-‏    <section id="contact" class="py-16 bg-gradient-to-r from-red-600 to-orange-600 text-white">
-‏        <div class="container mx-auto px-4">
-‏            <h2 class="text-4xl font-bold text-center mb-12">📞 צור קשר</h2>
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gradient-to-r from-red-600 to-orange-600 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">📞 צור קשר</h2>
             
-‏            <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-‏                <div class="bg-white/10 rounded-2xl p-8">
-‏                    <h3 class="text-2xl font-bold mb-6">📍 פרטי יצירת קשר</h3>
+            <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                <div class="bg-white/10 rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold mb-6">📍 פרטי יצירת קשר</h3>
                     
-‏                    <div class="space-y-6">
-‏                        <div class="flex items-center space-x-4 space-x-reverse">
-‏                            <div class="bg-white/20 p-3 rounded-full">📍</div>
-‏                            <div>
-‏                                <h4 class="font-bold text-lg">כתובת</h4>
-‏                                <p>קלאוזנר 2, רעננה</p>
-‏                            </div>
-‏                        </div>
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <div class="bg-white/20 p-3 rounded-full">📍</div>
+                            <div>
+                                <h4 class="font-bold text-lg">כתובת</h4>
+                                <p>קלאוזנר 2, רעננה</p>
+                            </div>
+                        </div>
                         
-‏                        <div class="flex items-center space-x-4 space-x-reverse">
-‏                            <div class="bg-white/20 p-3 rounded-full">📞</div>
-‏                            <div>
-‏                                <h4 class="font-bold text-lg">טלפון</h4>
-‏                                <a href="tel:050-821-1254" class="hover:underline">050-821-1254</a>
-‏                            </div>
-‏                        </div>
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <div class="bg-white/20 p-3 rounded-full">📞</div>
+                            <div>
+                                <h4 class="font-bold text-lg">טלפון</h4>
+                                <a href="tel:050-821-1254" class="hover:underline">050-821-1254</a>
+                            </div>
+                        </div>
                         
-‏                        <div class="flex items-center space-x-4 space-x-reverse">
-‏                            <div class="bg-white/20 p-3 rounded-full">💬</div>
-‏                            <div>
-‏                                <h4 class="font-bold text-lg">WhatsApp</h4>
-‏                                <a href="https://wa.me/972508211254" class="hover:underline">שלח הודעה</a>
-‏                            </div>
-‏                        </div>
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <div class="bg-white/20 p-3 rounded-full">💬</div>
+                            <div>
+                                <h4 class="font-bold text-lg">WhatsApp</h4>
+                                <a href="https://wa.me/972508211254" class="hover:underline">שלח הודעה</a>
+                            </div>
+                        </div>
                         
-‏                        <div class="flex items-center space-x-4 space-x-reverse">
-‏                            <div class="bg-white/20 p-3 rounded-full">🕐</div>
-‏                            <div>
-‏                                <h4 class="font-bold text-lg">שעות פעילות</h4>
-‏                                <p>יום-שבת: 06:00-24:00</p>
-‏                            </div>
-‏                        </div>
-‏                    </div>
+                        <div class="flex items-center space-x-4 space-x-reverse">
+                            <div class="bg-white/20 p-3 rounded-full">🕐</div>
+                            <div>
+                                <h4 class="font-bold text-lg">שעות פעילות</h4>
+                                <p>יום-שבת: 06:00-24:00</p>
+                            </div>
+                        </div>
+                    </div>
                     
-‏                    <div class="mt-8 flex gap-4">
-‏                        <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
-‏                           class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-blue-700 transition-colors">
+                    <div class="mt-8 flex gap-4">
+                        <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
+                           class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-blue-700 transition-colors">
                             🗺️ נווט ב-Waze
-‏                        </a>
-‏                        <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
-‏                           class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-green-700 transition-colors">
-‏                            🗺️ Google Maps
-‏                        </a>
-‏                    </div>
-‏                </div>
+                        </a>
+                        <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
+                           class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-green-700 transition-colors">
+                            🗺️ Google Maps
+                        </a>
+                    </div>
+                </div>
                 
-‏                <div class="bg-white/10 rounded-2xl p-8">
-‏                    <h3 class="text-2xl font-bold mb-6">💌 שלח הודעה</h3>
+                <div class="bg-white/10 rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold mb-6">💌 שלח הודעה</h3>
                     
-‏                    <form class="space-y-6" onsubmit="sendMessage(event)">
-‏                        <div>
-‏                            <label class="block text-sm font-bold mb-2">שם מלא</label>
-‏                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-‏                        </div>
+                    <form class="space-y-6" onsubmit="sendMessage(event)">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">שם מלא</label>
+                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
+                        </div>
                         
-‏                        <div>
-‏                            <label class="block text-sm font-bold mb-2">טלפון</label>
-‏                            <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-‏                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">טלפון</label>
+                            <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
+                        </div>
                         
-‏                        <div>
-‏                            <label class="block text-sm font-bold mb-2">הודעה</label>
-‏                            <textarea rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900" placeholder="כתב כאן את ההודעה שלך..."></textarea>
-‏                        </div>
-                        
-‏                        <button type="submit" class="w-full bg-white text-red-600 py-4 px-6 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
-                            📤 שלח הודעה
-‏                        </button>
-‏                    </form>
-‏                </div>
-‏            </div>
-‏        </div>
-‏    </section>
-
-‏    <!-- Footer -->
-‏    <footer class="bg-gray-900 text-white py-8">
-‏        <div class="container mx-auto px-4 text-center">
-‏            <h3 class="text-xl font-bold mb-4">🏪 הפינה של רונן</h3>
-‏            <p class="mb-2">📍 קלאוזנר 2, רעננה</p>
-‏            <p class="mb-2">📞 050-821-1254</p>
-‏            <p class="mb-4">💬 <a href="https://wa.me/972508211254" class="text-green-400">WhatsApp</a></p>
-‏            <p class="text-gray-400">&copy; 2024 הפינה של רונן - 30 שנה של שירות מעולה</p>
-‏        </div>
-‏    </footer>
-
-‏    <script>
-‏        // Products Database
-‏        const products = [
-‏            {id: 1, name: 'במבה', price: 7, category: 'חטיפים', image: '🥜', description: 'חטיף במבה קלאסי ופריך'},
-‏            {id: 2, name: 'שוקולד מילקה', price: 15, category: 'חטיפים', image: '🍫', description: 'שוקולד מילקה מקורי'},
-‏            {id: 3, name: 'עוגיות אוראו', price: 12, category: 'חטיפים', image: '🍪', description: 'עוגיות אוראו מקוריות'},
-‏            {id: 4, name: 'קולה קר', price: 8, category: 'שתיה מתוקה', image: '🥤', description: 'קולה קרה ומרעננת'},
-‏            {id: 5, name: 'מיץ תפוזים', price: 14, category: 'שתיה מתוקה', image: '🍊', description: 'מיץ תפוזים טבעי'},
-‏            {id: 6, name: 'בירה גולדסטאר', price: 18, category: 'שתיה חריפה', image: '🍺', description: 'בירה גולדסטאר קרה'},
-‏            {id: 7, name: 'מרלבורו', price: 38, category: 'סיגריות', image: '🚬', description: 'מרלבורו רד - קופסה'},
-‏            {id: 8, name: 'מארז יום הולדת', price: 85, category: 'מארזים לחג וימי הולדת', image: '🎁', description: 'מארז יום הולדת עם בלונים וממתקים'},
-‏            {id: 9, name: 'בלון הליום', price: 8, category: 'בלונים וכו', image: '🎈', description: 'בלון הליום צבעוני'},
-‏            {id: 10, name: 'נרות יום הולדת', price: 15, category: 'בלונים וכו', image: '🕯️', description: 'סט נרות יום הולדת'}
-        ];
-
-‏        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-‏        let currentCategory = 'הכל';
-
-‏        // Initialize
-‏        document.addEventListener('DOMContentLoaded', function() {
-‏            displayProducts(products);
-‏            updateCartUI();
-        });
-
-‏        function displayProducts(productsToShow) {
-‏            const grid = document.getElementById('products-grid');
-‏            grid.innerHTML = '';
-
-‏            productsToShow.forEach(product => {
-‏                const productCard = document.createElement('div');
-‏                productCard.className = 'product-card bg-white rounded-2xl shadow-lg overflow-hidden';
-                
-‏                productCard.innerHTML = `
-‏                    <div class="p-6 text-center">
-‏                        <div class="text-6xl mb-4">${product.image}</div>
-‏                        <h3 class="text-xl font-bold mb-2">${product.name}</h3>
-‏                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
-‏                        <div class="flex justify-between items-center mb-4">
-‏                            <span class="text-2xl font-bold text-red-600">₪${product.price}</span>
-‏                            <span class="text-xs bg-gray-100 px-2 py-1 rounded-full">${product.category}</span>
-‏                        </div>
-‏                        <button onclick="addToCart(${product.id})" 
-‏                                class="w-full bg-red-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-red-700 transition-colors">
-                            🛒 הוסף לעגלה
-‏                        </button>
-‏                    </div>
-                `;
-                
-‏                grid.appendChild(productCard);
-            });
-        }
-
-‏        function filterByCategory(category) {
-‏            currentCategory = category;
-            
-‏            document.querySelectorAll('.category-btn').forEach(btn => {
-‏                btn.className = 'category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200';
-            });
-‏            event.target.className = 'category-btn px-6 py-3 rounded-full font-medium bg-red-600 text-white';
-            
-‏            const filteredProducts = category === 'הכל' ? products : products.filter(p => p.category === category);
-‏            displayProducts(filteredProducts);
-        }
-
-‏        function addToCart(productId) {
-‏            const product = products.find(p => p.id === productId);
-‏            const existingItem = cart.find(item => item.id === productId);
-            
-‏            if (existingItem) {
-‏                existingItem.quantity += 1;
-‏            } else {
-‏                cart.push({ ...product, quantity: 1 });
-            }
-            
-‏            localStorage.setItem('cart', JSON.stringify(cart));
-‏            updateCartUI();
-‏            showNotification(`${product.name} נוסף לעגלה! 🛒`);
-        }
-
-‏        function updateCartUI() {
-‏            const cartCount = document.getElementByI
+                        <div>
+                            <label class="block text-sm font-bold mb-2">הודעה</label>
+                            <textarea rows="4" required class="w-full px-4 py-3 border border-gray-300
