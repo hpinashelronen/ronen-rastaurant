@@ -3,498 +3,1901 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הפינה של רונן - 30 שנה של שירות מעולה | הזמנות אונליין</title>
-    
-    <meta name="description" content="הפינה של רונן - 30 שנה של שירות מעולה ברעננה! הזמנות אונליין מתקדמות, משלוחים מהירים תוך 15 דקות. קלאוזנר 2, רעננה. טל: 050-821-1254">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>הפינה של רונן | מערכת מלאה ומתקדמת</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         * { font-family: 'Assistant', sans-serif; }
         
-        .floating-whatsapp {
+        .hero-gradient { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 25%, #feca57 50%, #48dbfb 75%, #0abde3 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .floating-btn {
             position: fixed;
-            bottom: 20px;
             left: 20px;
             z-index: 1000;
-            animation: bounce 2s infinite;
+            animation: float 3s ease-in-out infinite;
         }
         
-        .floating-cart {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            z-index: 1000;
-            animation: pulse 2s infinite;
-        }
+        .floating-cart { bottom: 300px; }
+        .floating-admin { bottom: 240px; animation-delay: 1s; }
+        .floating-flowers { bottom: 180px; animation-delay: 2s; }
+        .floating-whatsapp { bottom: 120px; animation-delay: 3s; }
+        .floating-chat { bottom: 60px; animation-delay: 4s; }
+        .floating-voice { bottom: 20px; right: 20px; left: auto; animation-delay: 5s; }
         
-        .floating-admin {
-            position: fixed;
-            bottom: 180px;
-            left: 20px;
-            z-index: 1000;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-            40%, 43% { transform: translateY(-10px); }
-            70% { transform: translateY(-5px); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
         .product-card {
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            position: relative;
         }
         
         .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(220, 38, 38, 0.2);
-            border-color: #dc2626;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         
-        .cart-sidebar, .admin-sidebar {
+        .product-card.out-of-stock {
+            opacity: 0.6;
+            filter: grayscale(50%);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .modal {
+            display: none;
             position: fixed;
+            z-index: 2000;
+            left: 0;
             top: 0;
-            right: -500px;
-            width: 500px;
-            height: 100vh;
-            background: white;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-            transition: right 0.3s ease;
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
             overflow-y: auto;
         }
         
-        .cart-sidebar.open, .admin-sidebar.open { right: 0; }
-        
-        .cart-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
-        .cart-overlay.open {
-            opacity: 1;
-            visibility: visible;
+        .stock-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
         }
         
-        @media (max-width: 768px) {
-            .cart-sidebar, .admin-sidebar {
-                width: 100vw;
-                right: -100vw;
-            }
-        }
+        .in-stock { background: #10b981; color: white; }
+        .out-of-stock { background: #ef4444; color: white; }
+        .low-stock { background: #f59e0b; color: white; }
         
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #10B981;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            z-index: 2000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
+            padding: 15px 20px;
+            border-radius: 10px;
+            z-index: 3000;
+            animation: slideIn 0.5s ease;
+            font-weight: bold;
         }
         
-        .notification.show {
-            transform: translateX(0);
+        .notification.success { background: #10b981; color: white; }
+        .notification.error { background: #ef4444; color: white; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .payment-method {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .payment-method.selected {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+        
+        .dashboard-widget {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .delivery-map {
+            height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .chat-widget {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1500;
+        }
+        
+        .edit-controls {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .admin-mode .edit-controls {
+            display: block;
+        }
+        
+        .admin-mode .product-card {
+            border: 2px dashed #9333ea;
+        }
+        
+        .sabbath-mode {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 text-gray-800">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 hero-gradient flex items-center justify-center z-50">
+        <div class="text-center text-white">
+            <div class="loading-spinner mb-4"></div>
+            <h2 class="text-3xl font-bold">טוען את הפינה של רונן...</h2>
+            <p class="mt-2 text-lg">מכין את כל המערכות המתקדמות שלך</p>
+        </div>
+    </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
+    <!-- Floating Buttons -->
+    <button id="cartBtn" class="floating-btn floating-cart bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all duration-300 relative">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h5a2 2 0 002-2v-.5"></path>
+        </svg>
+        <span id="cartCount" class="cart-count hidden">0</span>
+    </button>
 
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/972508211254?text=שלום%20רונן,%20אני%20רוצה%20לבצע%20הזמנה" 
-       class="floating-whatsapp bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-colors" 
-       target="_blank">
-        📱
+    <button id="adminBtn" class="floating-btn floating-admin bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-full shadow-lg transition-all duration-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+    </button>
+
+    <button id="flowersBtn" class="floating-btn floating-flowers bg-pink-500 hover:bg-pink-600 text-white p-4 rounded-full shadow-lg transition-all duration-300">
+        <span class="text-2xl">🌸</span>
+    </button>
+
+    <a href="https://wa.me/972508217759?text=היי רונן! אני רוצה להזמין מהחנות" 
+       class="floating-btn floating-whatsapp bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-all duration-300 block">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+        </svg>
     </a>
 
-    <!-- Cart Button -->
-    <button onclick="toggleCart()" class="floating-cart bg-red-600 text-white p-4 rounded-full shadow-2xl hover:bg-red-700 transition-colors relative">
-        🛒
-        <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-red-600 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center" style="display: none;">0</span>
+    <button id="chatBtn" class="floating-btn floating-chat bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all duration-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
     </button>
 
-    <!-- Admin Button -->
-    <button onclick="toggleAdmin()" class="floating-admin bg-purple-600 text-white p-4 rounded-full shadow-2xl hover:bg-purple-700 transition-colors">
-        ⚙️
+    <button id="voiceBtn" class="floating-btn floating-voice bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all duration-300 pulse">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+        </svg>
     </button>
 
-    <!-- Overlays -->
-    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
-    <div id="admin-overlay" class="cart-overlay" onclick="toggleAdmin()"></div>
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden">
+        <!-- Sabbath Notice -->
+        <div id="sabbathNotice" class="hidden bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center py-4 font-bold">
+            🕯️ מצב שבת פעיל - החנות סגורה עד מוצאי שבת
+        </div>
 
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="cart-sidebar">
-        <div class="p-6 border-b border-gray-200 bg-red-600 text-white">
-            <div class="flex justify-between items-center">
-                <h3 class="text-2xl font-bold">🛒 עגלת הקניות</h3>
-                <button onclick="toggleCart()" class="text-white text-3xl">×</button>
-            </div>
-            <div class="mt-4 bg-orange-500 p-3 rounded-lg">
-                ⚡ משלוח מהיר תוך 15 דקות!
-            </div>
+        <!-- Flowers Notice -->
+        <div id="flowersNotice" class="hidden bg-gradient-to-r from-pink-500 to-red-500 text-white text-center py-3 font-bold">
+            🌸 שירות פרחים עד הבית זמין בימי שישי וחגים בלבד!
         </div>
-        
-        <div class="bg-purple-100 p-4">
-            <h4 class="font-bold text-lg mb-2">🎉 הצעה מיוחדת!</h4>
-            <p class="text-sm">משלוח חינם להזמנות מעל ₪80</p>
-        </div>
-        
-        <div id="cart-items" class="p-6 flex-1">
-            <div class="text-center text-gray-500 py-8">
-                <div class="text-6xl mb-4">🛒</div>
-                <p class="text-lg">העגלה שלך ריקה</p>
-                <p class="text-sm">הוסף מוצרים כדי להתחיל</p>
-            </div>
-        </div>
-        
-        <div id="cart-footer" class="p-6 border-t border-gray-200 bg-gray-50" style="display: none;">
-            <div class="space-y-4">
-                <div class="bg-white p-4 rounded-lg">
-                    <h4 class="font-bold mb-3">🚚 אפשרויות משלוח</h4>
-                    <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="delivery" value="express" checked onchange="updateDelivery()">
-                            <span class="mr-2">משלוח מהיר (15 דק') - ₪10</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="delivery" value="standard" onchange="updateDelivery()">
-                            <span class="mr-2">משלוח רגיל (30 דק') - ₪5</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="delivery" value="pickup" onchange="updateDelivery()">
-                            <span class="mr-2">איסוף עצמי - חינם</span>
-                        </label>
-                    </div>
+
+        <!-- Header -->
+        <header class="hero-gradient text-white py-8 text-center shadow-lg">
+            <h1 class="text-4xl font-bold mb-2">הפינה של רונן</h1>
+            <p class="text-xl mb-4">החנות הכי שווה ברעננה!</p>
+            <div class="text-lg space-y-2">
+                <div class="font-bold">📞 050-8217759</div>
+                <div class="text-base">
+                    <div>🕐 ראשון-חמישי: 8:00-22:00</div>
+                    <div>🕐 שישי: 8:00-16:00 (יתכנו שינויים לכניסת שבת)</div>
                 </div>
-                
-                <div class="bg-white p-4 rounded-lg space-y-2">
-                    <div class="flex justify-between">
-                        <span>סכום מוצרים:</span>
-                        <span id="subtotal">₪0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>משלוח:</span>
-                        <span id="delivery-cost">₪10</span>
-                    </div>
-                    <hr>
-                    <div class="flex justify-between text-xl font-bold text-red-600">
-                        <span>סה"כ:</span>
-                        <span id="cart-total">₪0</span>
-                    </div>
+                <div class="text-base mt-4 space-y-1">
+                    <div>📍 משלוחים ברעננה בלבד</div>
+                    <div>⏱️ זמן הגעה: עד 40 דקות</div>
+                    <div>🚚 דמי משלוח: 23₪</div>
                 </div>
-                
-                <button onclick="checkout()" class="w-full bg-red-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:bg-red-700 transition-colors">
-                    💳 המשך להזמנה
-                </button>
-                
-                <button onclick="clearCart()" class="w-full bg-gray-300 text-gray-700 py-2 px-6 rounded-lg font-medium hover:bg-gray-400 transition-colors">
-                    🗑️ רוקן עגלה
-                </button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-md py-4 sticky top-0 z-40">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center space-x-4 text-sm">
+                    <a href="https://waze.com/ul?q=הפינה של רונן רעננה" target="_blank" 
+                       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-bold transition duration-300">
+                        🗺️ פתח ב-Waze
+                    </a>
+                    <a href="https://maps.google.com/?q=הפינה של רונן רעננה" target="_blank" 
+                       class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold transition duration-300">
+                        🗺️ Google Maps
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Daily Profit Display -->
+        <div id="profitDisplay" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center py-6 mx-4 mt-4 rounded-xl shadow-lg">
+            <h3 class="text-xl font-bold">💰 רווח יומי</h3>
+            <div id="dailyProfit" class="text-3xl font-bold mt-2">0₪</div>
+        </div>
+
+        <!-- Delivery Tracker -->
+        <div id="deliveryTracker" class="hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white mx-4 mt-4 p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-bold mb-3">🚚 מעקב משלוח בזמן אמת</h3>
+            <div id="deliveryStatus" class="mb-3">אין משלוחים פעילים</div>
+            <div id="deliveryMap" class="delivery-map bg-white rounded-lg"></div>
+        </div>
+
+        <!-- Products Container -->
+        <div id="productsContainer" class="container mx-auto px-4 py-8">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chatWidget" class="chat-widget">
+        <div class="bg-blue-500 text-white p-4 rounded-t-15 flex justify-between items-center">
+            <h3 class="font-bold">💬 צ'אט חי עם רונן</h3>
+            <button id="closeChatWidget" class="text-white text-xl">&times;</button>
+        </div>
+        <div id="chatMessages" class="p-4 h-80 overflow-y-auto bg-gray-50">
+            <div class="bg-blue-100 p-3 rounded-lg mb-2">
+                <strong>רונן:</strong> שלום! איך אני יכול לעזור?
+            </div>
+        </div>
+        <div class="p-4 border-t">
+            <div class="flex">
+                <input type="text" id="chatInput" placeholder="כתוב הודעה..." class="flex-1 p-2 border rounded-r-lg">
+                <button id="sendChatMessage" class="bg-blue-500 text-white px-4 py-2 rounded-l-lg hover:bg-blue-600">שלח</button>
             </div>
         </div>
     </div>
 
-    <!-- Admin Sidebar -->
-    <div id="admin-sidebar" class="admin-sidebar">
-        <div class="p-6 border-b border-gray-200 bg-purple-600 text-white">
-            <div class="flex justify-between items-center">
-                <h3 class="text-2xl font-bold">⚙️ ניהול החנות</h3>
-                <button onclick="toggleAdmin()" class="text-white text-3xl">×</button>
-            </div>
-        </div>
-        
-        <div class="p-6 space-y-6">
-            <!-- Add Product Form -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h4 class="text-xl font-bold mb-4 text-purple-600">➕ הוסף מוצר חדש</h4>
-                <form id="add-product-form" class="space-y-4">
-                    <input type="text" id="product-name" placeholder="שם המוצר" class="w-full p-3 border rounded-lg" required>
-                    <input type="number" id="product-price" placeholder="מחיר (₪)" class="w-full p-3 border rounded-lg" required>
-                    <select id="product-category" class="w-full p-3 border rounded-lg" required>
-                        <option value="">בחר קטגוריה</option>
-                        <option value="חטיפים">🍿 חטיפים</option>
-                        <option value="שתיה מתוקה">🥤 שתיה מתוקה</option>
-                        <option value="שתיה חריפה">🍺 שתיה חריפה</option>
-                        <option value="סיגריות">🚬 סיגריות</option>
-                        <option value="מארזים לחג וימי הולדת">🎁 מארזים</option>
-                        <option value="בלונים וכו">🎈 בלונים</option>
-                    </select>
-                    <input type="text" id="product-emoji" placeholder="אימוג'י (🍿)" class="w-full p-3 border rounded-lg" maxlength="2">
-                    <textarea id="product-description" placeholder="תיאור המוצר" class="w-full p-3 border rounded-lg" rows="3"></textarea>
-                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700">
-                        ➕ הוסף מוצר
-                    </button>
-                </form>
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🛒 העגלה שלי</h2>
+                <button id="closeCart" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
             </div>
             
-            <!-- Products Management -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h4 class="text-xl font-bold mb-4 text-purple-600">📝 ערוך מוצרים קיימים</h4>
-                <div id="admin-products-list" class="space-y-3 max-h-96 overflow-y-auto">
-                    <!-- Products will be loaded here -->
+            <div id="cartItems" class="space-y-4 mb-6"></div>
+            
+            <div class="border-t pt-4">
+                <div id="cartSubtotal" class="text-lg font-bold mb-2"></div>
+                <div id="cartDelivery" class="text-lg mb-2"></div>
+                <div id="cartTotal" class="text-xl font-bold mb-6 pt-2 border-t"></div>
+            </div>
+            
+            <!-- Payment Methods -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4">💳 אמצעי תשלום</h3>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="cash">💵<br>מזומן</div>
+                    <div class="payment-method" data-method="bit">📱<br>ביט</div>
+                    <div class="payment-method" data-method="paybox">📦<br>פייבוקס</div>
+                    <div class="payment-method" data-method="credit">💳<br>אשראי</div>
                 </div>
             </div>
             
-            <!-- Store Stats -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h4 class="text-xl font-bold mb-4 text-purple-600">📊 סטטיסטיקות</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600" id="total-products">0</div>
-                        <div class="text-sm text-gray-600">מוצרים פעילים</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-blue-600" id="total-orders">0</div>
+            <!-- Order Notes -->
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-2">הערות להזמנה</label>
+                <textarea id="orderNotes" class="w-full p-3 border rounded-lg" rows="3" placeholder="קומה, הנחיות מיוחדות, זמן מועדף..."></textarea>
+            </div>
+            
+            <!-- Scheduled Delivery -->
+            <div class="mb-6">
+                <label class="flex items-center mb-2">
+                    <input type="checkbox" id="scheduledDelivery" class="mr-2">
+                    <span class="font-bold">הזמנה מתוזמנת</span>
+                </label>
+                <input type="datetime-local" id="deliveryTime" class="w-full p-3 border rounded-lg hidden">
+            </div>
+            
+            <button id="checkoutBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition duration-300">
+                📱 שלח הזמנה בוואטסאפ
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">⚙️ דשבורד ניהול מתקדם</h2>
+                <button id="closeAdmin" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <button id="addProductBtn" class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    ➕ הוסף מוצר
+                </button>
+                <button id="toggleEditMode" class="bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    ✏️ מצב עריכה
+                </button>
+                <button id="markAllOutBtn" class="bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    📦 אזל הכל
+                </button>
+                <button id="sabbathModeBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    🕯️ מצב שבת
+                </button>
+                <button id="exportData" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    📊 ייצוא נתונים
+                </button>
+                <button id="backupData" class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    💾 גיבוי אוטומטי
+                </button>
+                <button id="voiceToDelivery" class="bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    🎤 הודעה קולית
+                </button>
+                <button id="customerManagement" class="bg-teal-500 hover:bg-teal-600 text-white py-3 px-4 rounded-lg font-bold transition duration-300">
+                    👥 לקוחות קבועים
+                </button>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-widget">
+                <h3 class="text-xl font-bold mb-4">📊 סטטיסטיקות היום</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center bg-white p-4 rounded-lg shadow">
+                        <div class="text-3xl font-bold text-green-600" id="todayOrders">0</div>
                         <div class="text-sm text-gray-600">הזמנות היום</div>
                     </div>
+                    <div class="text-center bg-white p-4 rounded-lg shadow">
+                        <div class="text-3xl font-bold text-blue-600" id="todayRevenue">0₪</div>
+                        <div class="text-sm text-gray-600">הכנסות היום</div>
+                    </div>
+                    <div class="text-center bg-white p-4 rounded-lg shadow">
+                        <div class="text-3xl font-bold text-purple-600" id="activeDeliveries">0</div>
+                        <div class="text-sm text-gray-600">משלוחים פעילים</div>
+                    </div>
+                    <div class="text-center bg-white p-4 rounded-lg shadow">
+                        <div class="text-3xl font-bold text-orange-600" id="lowStockItems">0</div>
+                        <div class="text-sm text-gray-600">מלאי נמוך</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Chart -->
+            <div class="dashboard-widget">
+                <h3 class="text-xl font-bold mb-4">📈 השבוע לעומת השבוע שעבר</h3>
+                <canvas id="weeklyChart" width="400" height="200"></canvas>
+                <div class="mt-4 text-center">
+                    <span id="weeklyTrend" class="text-lg font-bold"></span>
+                </div>
+            </div>
+
+            <!-- Best Selling Products -->
+            <div class="dashboard-widget">
+                <h3 class="text-xl font-bold mb-4">🏆 המוצרים הכי נמכרים היום</h3>
+                <div id="bestSelling" class="space-y-3"></div>
+            </div>
+
+            <!-- Low Stock Alerts -->
+            <div class="dashboard-widget">
+                <h3 class="text-xl font-bold mb-4">⚠️ התראות מלאי נמוך</h3>
+                <div id="lowStockAlerts" class="space-y-3"></div>
+            </div>
+
+            <!-- Customer Management -->
+            <div class="dashboard-widget">
+                <h3 class="text-xl font-bold mb-4">👥 ניהול לקוחות קבועים</h3>
+                <div class="flex mb-4">
+                    <input type="text" id="customerName" placeholder="שם לקוח" class="flex-1 p-2 border rounded-r-lg">
+                    <input type="tel" id="customerPhone" placeholder="טלפון" class="flex-1 p-2 border">
+                    <button id="addCustomerBtn" class="bg-green-500 text-white px-4 py-2 rounded-l-lg hover:bg-green-600">הוסף</button>
+                </div>
+                <div id="customersList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold" id="productModalTitle">➕ הוסף מוצר חדש</h2>
+                <button id="closeProductModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <form id="productForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-2">שם המוצר</label>
+                    <input type="text" id="productName" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">מחיר (₪)</label>
+                    <input type="number" id="productPrice" step="0.1" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">עלות (₪)</label>
+                    <input type="number" id="productCost" step="0.1" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">קטגוריה</label>
+                    <select id="productCategory" class="w-full p-3 border rounded-lg" required>
+                        <option value="snacks-salty">חטיפים מלוחים</option>
+                        <option value="snacks-sweet">חטיפים מתוקים</option>
+                        <option value="drinks-soft">משקאות קלים</option>
+                        <option value="drinks-alcohol">משקאות אלכוהוליים</option>
+                        <option value="cigarettes">סיגריות</option>
+                        <option value="flowers">פרחים</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2">כמות במלאי</label>
+                    <input type="number" id="productStock" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="productAgeRestricted" class="mr-2">
+                        <span>מוצר מוגבל לגילאי 18+</span>
+                    </label>
+                </div>
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg font-bold transition duration-300">
+                    שמור מוצר
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Flowers Modal -->
+    <div id="flowersModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">🌸 שירות פרחים עד הבית</h2>
+                <button id="closeFlowersModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div id="flowersContent">
+                <div class="text-center p-8">
+                    <div class="text-6xl mb-4">🌸</div>
+                    <h3 class="text-xl font-bold mb-4">שירות פרחים מיוחד</h3>
+                    <p class="text-gray-600 mb-6">שירות זמין בימי שישי וחגים בלבד</p>
+                    <div id="flowersProducts" class="space-y-4">
+                        <!-- Flowers products will be loaded here dynamically -->
+                    </div>
+                    <div class="mt-6 text-gray-500">
+                        <p>להוספת פרחים חדשים, השתמש בכפתור "הוסף מוצר" ובחר קטגוריה "פרחים"</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white shadow-lg sticky top-0 z-30">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <div class="text-4xl">🏪</div>
+    <script>
+        // Global variables
+        let products = {};
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
+        let isAdminMode = false;
+        let editMode = false;
+        let sabbathMode = false;
+        let customers = JSON.parse(localStorage.getItem('customers')) || [];
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        let selectedPaymentMethod = '';
+        let deliveryMap = null;
+        let deliveryMarker = null;
+        let currentEditingProduct = null;
+        let dailyStats = JSON.parse(localStorage.getItem('dailyStats')) || {
+            orders: 0,
+            revenue: 0,
+            profit: 0,
+            date: new Date().toDateString()
+        };
+
+        // Initialize products data
+        function initializeProducts() {
+            const defaultProducts = {
+                'bamba-osem': {
+                    name: 'במבה אסם',
+                    price: 4.50,
+                    cost: 3.00,
+                    category: 'snacks-salty',
+                    stock: 50,
+                    sold: 15,
+                    ageRestricted: false
+                },
+                'bissli-bbq': {
+                    name: 'ביסלי ברביקיו',
+                    price: 5.00,
+                    cost: 3.50,
+                    category: 'snacks-salty',
+                    stock: 30,
+                    sold: 8,
+                    ageRestricted: false
+                },
+                'bissli-onion': {
+                    name: 'ביסלי בצל',
+                    price: 5.00,
+                    cost: 3.50,
+                    category: 'snacks-salty',
+                    stock: 25,
+                    sold: 6,
+                    ageRestricted: false
+                },
+                'bissli-grill': {
+                    name: 'ביסלי גריל',
+                    price: 5.00,
+                    cost: 3.50,
+                    category: 'snacks-salty',
+                    stock: 20,
+                    sold: 4,
+                    ageRestricted: false
+                },
+                'pringles-original': {
+                    name: 'פרינגלס מקורי',
+                    price: 8.90,
+                    cost: 6.50,
+                    category: 'snacks-salty',
+                    stock: 15,
+                    sold: 3,
+                    ageRestricted: false
+                },
+                'doritos-nacho': {
+                    name: 'דוריטוס נאצ\'ו',
+                    price: 6.50,
+                    cost: 4.50,
+                    category: 'snacks-salty',
+                    stock: 20,
+                    sold: 5,
+                    ageRestricted: false
+                },
+                'click-original': {
+                    name: 'קליק מקורי',
+                    price: 4.00,
+                    cost: 2.80,
+                    category: 'snacks-salty',
+                    stock: 40,
+                    sold: 7,
+                    ageRestricted: false
+                },
+                'chocolate-milka': {
+                    name: 'שוקולד מילקה',
+                    price: 7.90,
+                    cost: 5.50,
+                    category: 'snacks-sweet',
+                    stock: 25,
+                    sold: 9,
+                    ageRestricted: false
+                },
+                'oreo-cookies': {
+                    name: 'עוגיות אוראו',
+                    price: 8.50,
+                    cost: 6.00,
+                    category: 'snacks-sweet',
+                    stock: 20,
+                    sold: 4,
+                    ageRestricted: false
+                },
+                'mentos-fruit': {
+                    name: 'מנטוס פירות',
+                    price: 3.50,
+                    cost: 2.20,
+                    category: 'snacks-sweet',
+                    stock: 35,
+                    sold: 6,
+                    ageRestricted: false
+                },
+                'kinder-surprise': {
+                    name: 'קינדר הפתעה',
+                    price: 6.90,
+                    cost: 4.80,
+                    category: 'snacks-sweet',
+                    stock: 15,
+                    sold: 3,
+                    ageRestricted: false
+                },
+                'coca-cola': {
+                    name: 'קוקה קולה 500מ"ל',
+                    price: 5.50,
+                    cost: 3.80,
+                    category: 'drinks-soft',
+                    stock: 50,
+                    sold: 12,
+                    ageRestricted: false
+                },
+                'sprite': {
+                    name: 'ספרייט 500מ"ל',
+                    price: 5.50,
+                    cost: 3.80,
+                    category: 'drinks-soft',
+                    stock: 30,
+                    sold: 7,
+                    ageRestricted: false
+                },
+                'fanta-orange': {
+                    name: 'פאנטה תפוזים 500מ"ל',
+                    price: 5.50,
+                    cost: 3.80,
+                    category: 'drinks-soft',
+                    stock: 25,
+                    sold: 5,
+                    ageRestricted: false
+                },
+                'orange-juice': {
+                    name: 'מיץ תפוזים טבעי',
+                    price: 8.90,
+                    cost: 6.20,
+                    category: 'drinks-soft',
+                    stock: 15,
+                    sold: 3,
+                    ageRestricted: false
+                },
+                'water-bottle': {
+                    name: 'בקבוק מים 500מ"ל',
+                    price: 2.50,
+                    cost: 1.50,
+                    category: 'drinks-soft',
+                    stock: 100,
+                    sold: 8,
+                    ageRestricted: false
+                },
+                'energy-drink': {
+                    name: 'משקה אנרגיה',
+                    price: 7.90,
+                    cost: 5.50,
+                    category: 'drinks-soft',
+                    stock: 20,
+                    sold: 4,
+                    ageRestricted: false
+                },
+                'beer-goldstar': {
+                    name: 'בירה גולדסטאר',
+                    price: 8.50,
+                    cost: 6.00,
+                    category: 'drinks-alcohol',
+                    stock: 25,
+                    sold: 6,
+                    ageRestricted: true
+                },
+                'beer-heineken': {
+                    name: 'בירה היינקן',
+                    price: 9.90,
+                    cost: 7.00,
+                    category: 'drinks-alcohol',
+                    stock: 20,
+                    sold: 4,
+                    ageRestricted: true
+                },
+                'wine-red': {
+                    name: 'יין אדום',
+                    price: 25.00,
+                    cost: 18.00,
+                    category: 'drinks-alcohol',
+                    stock: 10,
+                    sold: 2,
+                    ageRestricted: true
+                },
+                'whiskey': {
+                    name: 'וויסקי',
+                    price: 120.00,
+                    cost: 85.00,
+                    category: 'drinks-alcohol',
+                    stock: 5,
+                    sold: 1,
+                    ageRestricted: true
+                },
+                'marlboro-red': {
+                    name: 'מרלבורו אדום',
+                    price: 32.00,
+                    cost: 25.00,
+                    category: 'cigarettes',
+                    stock: 2,
+                    sold: 8,
+                    ageRestricted: true
+                },
+                'marlboro-gold': {
+                    name: 'מרלבורו זהב',
+                    price: 32.00,
+                    cost: 25.00,
+                    category: 'cigarettes',
+                    stock: 15,
+                    sold: 6,
+                    ageRestricted: true
+                },
+                'parliament': {
+                    name: 'פרלמנט',
+                    price: 34.00,
+                    cost: 27.00,
+                    category: 'cigarettes',
+                    stock: 12,
+                    sold: 4,
+                    ageRestricted: true
+                },
+                'camel': {
+                    name: 'קמל',
+                    price: 30.00,
+                    cost: 23.50,
+                    category: 'cigarettes',
+                    stock: 10,
+                    sold: 3,
+                    ageRestricted: true
+                }
+            };
+
+            // Load products from localStorage or use defaults
+            const savedProducts = localStorage.getItem('products');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+            } else {
+                products = defaultProducts;
+                saveProducts();
+            }
+        }
+
+        // Category titles and emojis
+        const categories = {
+            'snacks-salty': { title: 'חטיפים מלוחים', emoji: '🥨' },
+            'snacks-sweet': { title: 'חטיפים מתוקים', emoji: '🍫' },
+            'drinks-soft': { title: 'משקאות קלים', emoji: '🥤' },
+            'drinks-alcohol': { title: 'משקאות אלכוהוליים', emoji: '🍺' },
+            'cigarettes': { title: 'סיגריות', emoji: '🚬' },
+            'flowers': { title: 'פרחים', emoji: '🌸' }
+        };
+
+        // Initialize the application
+        function init() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.remove('hidden');
+                initializeProducts();
+                renderProducts();
+                updateCartCount();
+                checkSabbathMode();
+                checkFlowersAvailability();
+                initializeDeliveryMap();
+                updateDashboard();
+                setupEventListeners();
+                
+                // Auto-backup every hour
+                setInterval(autoBackup, 3600000);
+                
+                // Check if it's a new day and reset stats
+                if (dailyStats.date !== new Date().toDateString()) {
+                    resetDailyStats();
+                }
+            }, 2000);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Cart button
+            document.getElementById('cartBtn').addEventListener('click', showCart);
+            
+            // Admin button
+            document.getElementById('adminBtn').addEventListener('click', showAdmin);
+            
+            // Flowers button
+            document.getElementById('flowersBtn').addEventListener('click', showFlowers);
+            
+            // Chat button
+            document.getElementById('chatBtn').addEventListener('click', toggleChat);
+            
+            // Voice button
+            document.getElementById('voiceBtn').addEventListener('click', startVoiceRecording);
+            
+            // Modal close buttons
+            document.getElementById('closeCart').addEventListener('click', () => closeModal('cartModal'));
+            document.getElementById('closeAdmin').addEventListener('click', () => closeModal('adminModal'));
+            document.getElementById('closeFlowersModal').addEventListener('click', () => closeModal('flowersModal'));
+            document.getElementById('closeProductModal').addEventListener('click', () => closeModal('productModal'));
+            document.getElementById('closeChatWidget').addEventListener('click', () => document.getElementById('chatWidget').style.display = 'none');
+            
+            // Admin actions
+            document.getElementById('addProductBtn').addEventListener('click', showAddProduct);
+            document.getElementById('toggleEditMode').addEventListener('click', toggleEditMode);
+            document.getElementById('markAllOutBtn').addEventListener('click', markAllOut);
+            document.getElementById('sabbathModeBtn').addEventListener('click', toggleSabbathMode);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('backupData').addEventListener('click', manualBackup);
+            document.getElementById('voiceToDelivery').addEventListener('click', sendVoiceMessage);
+            document.getElementById('customerManagement').addEventListener('click', showCustomerManagement);
+            document.getElementById('addCustomerBtn').addEventListener('click', addCustomer);
+            
+            // Product form
+            document.getElementById('productForm').addEventListener('submit', saveProduct);
+            
+            // Payment methods
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', () => selectPaymentMethod(method.dataset.method));
+            });
+            
+            // Scheduled delivery
+            document.getElementById('scheduledDelivery').addEventListener('change', function() {
+                const deliveryTime = document.getElementById('deliveryTime');
+                if (this.checked) {
+                    deliveryTime.classList.remove('hidden');
+                } else {
+                    deliveryTime.classList.add('hidden');
+                }
+            });
+            
+            // Checkout button
+            document.getElementById('checkoutBtn').addEventListener('click', checkout);
+            
+            // Chat send message
+            document.getElementById('sendChatMessage').addEventListener('click', sendChatMessage);
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+        }
+
+        // Save functions
+        function saveProducts() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function saveCustomers() {
+            localStorage.setItem('customers', JSON.stringify(customers));
+        }
+
+        function saveOrders() {
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
+
+        function saveDailyStats() {
+            localStorage.setItem('dailyStats', JSON.stringify(dailyStats));
+        }
+
+        // Check if it's Sabbath or holiday
+        function checkSabbathMode() {
+            const now = new Date();
+            const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+            const hour = now.getHours();
+            
+            // Friday after 16:00 or Saturday
+            if ((day === 5 && hour >= 16) || day === 6) {
+                sabbathMode = true;
+                document.getElementById('sabbathNotice').classList.remove('hidden');
+                document.body.classList.add('sabbath-mode');
+            }
+        }
+
+        // Check if flowers service is available
+        function checkFlowersAvailability() {
+            const now = new Date();
+            const day = now.getDay(); // 5 = Friday
+            
+            if (day === 5 || isHoliday()) {
+                document.getElementById('flowersNotice').classList.remove('hidden');
+            }
+        }
+
+        // Check if today is a holiday (simplified)
+        function isHoliday() {
+            return false;
+        }
+
+        // Render products by category
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+
+            // Age restriction warning for alcohol and cigarettes
+            const hasAgeRestrictedItems = Object.values(products).some(p => p.ageRestricted);
+            if (hasAgeRestrictedItems) {
+                container.innerHTML += `
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+                        ⚠️ חלק מהמוצרים מיועדים לגילאי 18+ בלבד
+                    </div>
+                `;
+            }
+
+            Object.keys(categories).forEach(categoryKey => {
+                const categoryProducts = Object.entries(products).filter(([_, product]) => 
+                    product.category === categoryKey
+                );
+
+                if (categoryProducts.length === 0) return;
+
+                const category = categories[categoryKey];
+                
+                container.innerHTML += `
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                            ${category.emoji} ${category.title}
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            ${categoryProducts.map(([id, product]) => `
+                                <div class="product-card bg-white rounded-xl shadow-lg p-6 ${product.stock === 0 ? 'out-of-stock' : ''} ${editMode ? 'admin-mode' : ''}">
+                                    <div class="stock-status ${getStockStatus(product.stock)}">
+                                        ${getStockText(product.stock)}
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <div class="text-6xl mb-4">${getProductEmoji(product.category)}</div>
+                                        <h3 class="text-lg font-bold mb-2">${product.name}</h3>
+                                        <p class="text-2xl font-bold text-green-600 mb-4">${product.price}₪</p>
+                                        
+                                        ${product.ageRestricted ? '<div class="text-red-600 text-sm mb-2 font-bold">🔞 18+</div>' : ''}
+                                        
+                                        <div class="text-sm text-gray-600 mb-4">
+                                            ${product.stock > 0 ? `במלאי: ${product.stock} יח'` : 'אזל מהמלאי'}
+                                        </div>
+                                        
+                                        ${product.stock > 0 && !sabbathMode ? `
+                                            <button onclick="addToCart('${id}')" 
+                                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-bold transition duration-300 mb-2">
+                                                🛒 הוסף לעגלה
+                                            </button>
+                                        ` : `
+                                            <button class="w-full bg-gray-400 text-white py-2 px-4 rounded-lg font-bold cursor-not-allowed">
+                                                ${sabbathMode ? 'מצב שבת' : 'אזל מהמלאי'}
+                                            </button>
+                                        `}
+                                        
+                                        <div class="edit-controls">
+                                            <div class="flex gap-2 mb-2">
+                                                <button onclick="editProduct('${id}')" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded text-sm">
+                                                    ✏️ ערוך
+                                                </button>
+                                                <button onclick="deleteProduct('${id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm">
+                                                    🗑️ מחק
+                                                </button>
+                                            </div>
+                                            <button onclick="toggleStock('${id}')" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-1 px-3 rounded text-sm">
+                                                ${product.stock === 0 ? '✅ החזר למלאי' : '❌ סמן כאזל'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Get product emoji based on category
+        function getProductEmoji(category) {
+            const emojis = {
+                'snacks-salty': '🥨',
+                'snacks-sweet': '🍫',
+                'drinks-soft': '🥤',
+                'drinks-alcohol': '🍺',
+                'cigarettes': '🚬',
+                'flowers': '🌸'
+            };
+            return emojis[category] || '📦';
+        }
+
+        // Get stock status class
+        function getStockStatus(stock) {
+            if (stock === 0) return 'out-of-stock';
+            if (stock <= 5) return 'low-stock';
+            return 'in-stock';
+        }
+
+        // Get stock text
+        function getStockText(stock) {
+            if (stock === 0) return 'אזל';
+            if (stock <= 5) return 'מלאי נמוך';
+            return 'במלאי';
+        }
+
+        // Add to cart function
+        function addToCart(productId) {
+            if (sabbathMode) {
+                showNotification('החנות סגורה למצב שבת', 'error');
+                return;
+            }
+
+            const product = products[productId];
+            if (!product || product.stock === 0) {
+                showNotification('מוצר לא זמין במלאי', 'error');
+                return;
+            }
+
+            if (cart[productId]) {
+                cart[productId].quantity += 1;
+            } else {
+                cart[productId] = {
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    ageRestricted: product.ageRestricted
+                };
+            }
+
+            // Update stock
+            products[productId].stock -= 1;
+            products[productId].sold = (products[productId].sold || 0) + 1;
+
+            saveCart();
+            saveProducts();
+            updateCartCount();
+            renderProducts();
+            showNotification(`${product.name} נוסף לעגלה! 🛒`);
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            const product = products[productId];
+            if (cart[productId]) {
+                cart[productId].quantity -= 1;
+                
+                // Return stock
+                products[productId].stock += 1;
+                products[productId].sold = Math.max((products[productId].sold || 1) - 1, 0);
+
+                if (cart[productId].quantity <= 0) {
+                    delete cart[productId];
+                }
+            }
+
+            saveCart();
+            saveProducts();
+            updateCartCount();
+            renderProducts();
+            renderCart();
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const count = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountElement = document.getElementById('cartCount');
+            
+            if (count > 0) {
+                cartCountElement.textContent = count;
+                cartCountElement.classList.remove('hidden');
+            } else {
+                cartCountElement.classList.add('hidden');
+            }
+        }
+
+        // Show cart modal
+        function showCart() {
+            renderCart();
+            document.getElementById('cartModal').style.display = 'block';
+        }
+
+        // Render cart items
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartSubtotalElement = document.getElementById('cartSubtotal');
+            const cartDeliveryElement = document.getElementById('cartDelivery');
+            const cartTotalElement = document.getElementById('cartTotal');
+
+            if (Object.keys(cart).length === 0) {
+                cartItemsContainer.innerHTML = '<div class="text-center text-gray-500 py-8 text-lg">העגלה ריקה 🛒</div>';
+                cartSubtotalElement.innerHTML = '';
+                cartDeliveryElement.innerHTML = '';
+                cartTotalElement.innerHTML = '';
+                return;
+            }
+
+            let subtotal = 0;
+            let hasAgeRestrictedItems = false;
+
+            cartItemsContainer.innerHTML = Object.entries(cart).map(([productId, item]) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                if (item.ageRestricted) {
+                    hasAgeRestrictedItems = true;
+                }
+
+                return `
+                    <div class="flex justify-between items-center py-4 border-b">
+                        <div class="flex-1">
+                            <h4 class="font-bold">${item.name}</h4>
+                            <p class="text-gray-600">${item.price}₪ x ${item.quantity}</p>
+                            ${item.ageRestricted ? '<span class="text-red-600 text-sm">🔞 18+</span>' : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="removeFromCart('${productId}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
+                                -
+                            </button>
+                            <span class="font-bold">${item.quantity}</span>
+                            <button onclick="addToCart('${productId}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-sm">
+                                +
+                            </button>
+                        </div>
+                        <div class="text-right ml-4">
+                            <div class="font-bold">${itemTotal.toFixed(2)}₪</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (hasAgeRestrictedItems) {
+                cartItemsContainer.innerHTML += `
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mt-4 rounded">
+                        ⚠️ ההזמנה כוללת מוצרים מוגבלים לגילאי 18+
+                    </div>
+                `;
+            }
+
+            const deliveryFee = 23;
+            const total = subtotal + deliveryFee;
+
+            cartSubtotalElement.innerHTML = `סכום ביניים: ${subtotal.toFixed(2)}₪`;
+            cartDeliveryElement.innerHTML = `דמי משלוח: ${deliveryFee}₪`;
+            cartTotalElement.innerHTML = `<strong>סה"כ לתשלום: ${total.toFixed(2)}₪</strong>`;
+        }
+
+        // Show admin modal
+        function showAdmin() {
+            isAdminMode = true;
+            updateDashboard();
+            document.getElementById('adminModal').style.display = 'block';
+            document.getElementById('profitDisplay').classList.remove('hidden');
+        }
+
+        // Show flowers modal
+        function showFlowers() {
+            renderFlowersProducts();
+            document.getElementById('flowersModal').style.display = 'block';
+        }
+
+        // Render flowers products
+        function renderFlowersProducts() {
+            const flowersProducts = Object.entries(products).filter(([_, product]) => 
+                product.category === 'flowers'
+            );
+
+            const flowersContainer = document.getElementById('flowersProducts');
+            
+            if (flowersProducts.length === 0) {
+                flowersContainer.innerHTML = `
+                    <div class="text-gray-500 text-center">
+                        <p>אין פרחים זמינים כרגע</p>
+                        <p class="text-sm mt-2">להוספת פרחים, השתמש בכפתור "הוסף מוצר" ובחר קטגוריה "פרחים"</p>
+                    </div>
+                `;
+            } else {
+                flowersContainer.innerHTML = flowersProducts.map(([id, product]) => `
+                    <div class="bg-pink-50 p-4 rounded-lg border-2 border-pink-200">
+                        <h4 class="font-bold text-lg">${product.name}</h4>
+                        <p class="font-bold text-xl text-pink-600">${product.price}₪</p>
+                        <div class="text-sm text-gray-600 mb-2">
+                            ${product.stock > 0 ? `במלאי: ${product.stock} יח'` : 'אזל מהמלאי'}
+                        </div>
+                        ${product.stock > 0 && !sabbathMode ? `
+                            <button onclick="addToCart('${id}'); closeModal('flowersModal');" 
+                                class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg font-bold transition duration-300">
+                                🛒 הוסף לעגלה
+                            </button>
+                        ` : `
+                            <button class="w-full bg-gray-400 text-white py-2 px-4 rounded-lg font-bold cursor-not-allowed">
+                                ${sabbathMode ? 'מצב שבת' : 'אזל מהמלאי'}
+                            </button>
+                        `}
+                    </div>
+                `).join('');
+                
+                flowersContainer.innerHTML += `
+                    <button onclick="orderFlowersWhatsApp()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 px-6 rounded-lg font-bold mt-4 transition duration-300">
+                        📱 הזמן בוואטסאפ
+                    </button>
+                `;
+            }
+        }
+
+        // Order flowers via WhatsApp
+        function orderFlowersWhatsApp() {
+            const message = encodeURIComponent('היי רונן! אני רוצה להזמין פרחים עד הבית');
+            window.open(`https://wa.me/972508217759?text=${message}`, '_blank');
+        }
+
+        // Toggle chat widget
+        function toggleChat() {
+            const chatWidget = document.getElementById('chatWidget');
+            if (chatWidget.style.display === 'none' || chatWidget.style.display === '') {
+                chatWidget.style.display = 'block';
+            } else {
+                chatWidget.style.display = 'none';
+            }
+        }
+
+        // Send chat message
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.innerHTML += `
+                    <div class="bg-green-100 p-3 rounded-lg mb-2 text-right">
+                        <strong>אתה:</strong> ${message}
+                    </div>
+                `;
+                
+                // Auto response
+                setTimeout(() => {
+                    messagesContainer.innerHTML += `
+                        <div class="bg-blue-100 p-3 rounded-lg mb-2">
+                            <strong>רונן:</strong> תודה על ההודעה! אני אחזור אליך בהקדם
+                        </div>
+                    `;
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 1000);
+                
+                input.value = '';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        // Start voice recording
+        function startVoiceRecording() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'he-IL';
+                recognition.start();
+                
+                showNotification('מקליט... דבר עכשיו 🎤');
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    showNotification(`שמעתי: "${transcript}"`, 'success');
+                    
+                    // Process voice commands
+                    processVoiceCommand(transcript);
+                };
+                
+                recognition.onerror = function() {
+                    showNotification('שגיאה בהקלטה', 'error');
+                };
+            } else {
+                showNotification('הדפדפן לא תומך בהקלטה קולית', 'error');
+            }
+        }
+
+        // Process voice commands
+        function processVoiceCommand(command) {
+            const lowerCommand = command.toLowerCase();
+            
+            if (lowerCommand.includes('עגלה')) {
+                showCart();
+            } else if (lowerCommand.includes('ניהול') || lowerCommand.includes('אדמין')) {
+                showAdmin();
+            } else if (lowerCommand.includes('פרחים')) {
+                showFlowers();
+            } else {
+                // Send to chat
+                document.getElementById('chatInput').value = command;
+                sendChatMessage();
+            }
+        }
+
+        // Show add product modal
+        function showAddProduct() {
+            currentEditingProduct = null;
+            document.getElementById('productModalTitle').textContent = '➕ הוסף מוצר חדש';
+            document.getElementById('productForm').reset();
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        // Edit product
+        function editProduct(productId) {
+            currentEditingProduct = productId;
+            const product = products[productId];
+            
+            document.getElementById('productModalTitle').textContent = '✏️ ערוך מוצר';
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productCost').value = product.cost;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productAgeRestricted').checked = product.ageRestricted;
+            
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        // Save product
+        function saveProduct(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const cost = parseFloat(document.getElementById('productCost').value);
+            const category = document.getElementById('productCategory').value;
+            const stock = parseInt(document.getElementById('productStock').value);
+            const ageRestricted = document.getElementById('productAgeRestricted').checked;
+            
+            const productData = {
+                name,
+                price,
+                cost,
+                category,
+                stock,
+                ageRestricted,
+                sold: currentEditingProduct ? products[currentEditingProduct].sold : 0
+            };
+            
+            if (currentEditingProduct) {
+                products[currentEditingProduct] = productData;
+                showNotification('מוצר עודכן בהצלחה!', 'success');
+            } else {
+                const productId = 'custom-' + Date.now();
+                products[productId] = productData;
+                showNotification('מוצר נוסף בהצלחה!', 'success');
+            }
+            
+            saveProducts();
+            renderProducts();
+            closeModal('productModal');
+        }
+
+        // Delete product
+        function deleteProduct(productId) {
+            if (confirm('האם אתה בטוח שברצונך למחוק את המוצר?')) {
+                delete products[productId];
+                saveProducts();
+                renderProducts();
+                showNotification('מוצר נמחק בהצלחה!', 'success');
+            }
+        }
+
+        // Toggle stock
+        function toggleStock(productId) {
+            const product = products[productId];
+            if (product.stock === 0) {
+                product.stock = 10; // Return to stock
+                showNotification(`${product.name} הוחזר למלאי`, 'success');
+            } else {
+                product.stock = 0; // Mark as out of stock
+                showNotification(`${product.name} סומן כאזל`, 'success');
+            }
+            
+            saveProducts();
+            renderProducts();
+        }
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const container = document.getElementById('productsContainer');
+            
+            if (editMode) {
+                container.classList.add('admin-mode');
+                showNotification('מצב עריכה פעיל', 'success');
+            } else {
+                container.classList.remove('admin-mode');
+                showNotification('מצב עריכה כבוי', 'success');
+            }
+        }
+
+        // Mark all products as out of stock
+        function markAllOut() {
+            if (confirm('האם אתה בטוח שברצונך לסמן את כל המוצרים כאזלו?')) {
+                Object.values(products).forEach(product => {
+                    product.stock = 0;
+                });
+                
+                saveProducts();
+                renderProducts();
+                showNotification('כל המוצרים סומנו כאזלו', 'success');
+            }
+        }
+
+        // Toggle Sabbath mode
+        function toggleSabbathMode() {
+            sabbathMode = !sabbathMode;
+            
+            if (sabbathMode) {
+                document.getElementById('sabbathNotice').classList.remove('hidden');
+                document.body.classList.add('sabbath-mode');
+                showNotification('מצב שבת הופעל', 'success');
+            } else {
+                document.getElementById('sabbathNotice').classList.add('hidden');
+                document.body.classList.remove('sabbath-mode');
+                showNotification('מצב שבת בוטל', 'success');
+            }
+            
+            renderProducts();
+        }
+
+        // Export data
+        function exportData() {
+            const data = {
+                products,
+                customers,
+                orders,
+                dailyStats,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ronen-store-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('נתונים יוצאו בהצלחה!', 'success');
+        }
+
+        // Manual backup
+        function manualBackup() {
+            autoBackup();
+            showNotification('גיבוי בוצע בהצלחה!', 'success');
+        }
+
+        // Auto backup
+        function autoBackup() {
+            const backupData = {
+                products,
+                cart,
+                customers,
+                orders,
+                dailyStats,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('autoBackup', JSON.stringify(backupData));
+        }
+
+        // Send voice message to delivery
+        function sendVoiceMessage() {
+            startVoiceRecording();
+        }
+
+        // Show customer management
+        function showCustomerManagement() {
+            renderCustomers();
+        }
+
+        // Add customer
+        function addCustomer() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            
+            if (name && phone) {
+                customers.push({
+                    id: Date.now(),
+                    name,
+                    phone,
+                    orders: 0,
+                    totalSpent: 0
+                });
+                
+                saveCustomers();
+                renderCustomers();
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').value = '';
+                showNotification('לקוח נוסף בהצלחה!', 'success');
+            }
+        }
+
+        // Render customers
+        function renderCustomers() {
+            const container = document.getElementById('customersList');
+            
+            if (customers.length === 0) {
+                container.innerHTML = '<div class="text-gray-500 text-center">אין לקוחות קבועים</div>';
+                return;
+            }
+            
+            container.innerHTML = customers.map(customer => `
+                <div class="bg-white p-3 rounded-lg shadow flex justify-between items-center">
                     <div>
-                        <h1 class="text-3xl font-bold text-red-600">הפינה של רונן</h1>
-                        <p class="text-sm text-gray-600">30 שנה של שירות מעולה • 050-821-1254</p>
+                        <div class="font-bold">${customer.name}</div>
+                        <div class="text-sm text-gray-600">${customer.phone}</div>
+                        <div class="text-sm text-gray-600">${customer.orders} הזמנות | ${customer.totalSpent}₪</div>
                     </div>
+                    <button onclick="removeCustomer(${customer.id})" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
+                        🗑️
+                    </button>
                 </div>
+            `).join('');
+        }
+
+        // Remove customer
+        function removeCustomer(customerId) {
+            if (confirm('האם אתה בטוח שברצונך למחוק את הלקוח?')) {
+                customers = customers.filter(c => c.id !== customerId);
+                saveCustomers();
+                renderCustomers();
+                showNotification('לקוח נמחק בהצלחה!', 'success');
+            }
+        }
+
+        // Select payment method
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+        }
+
+        // Checkout
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                showNotification('העגלה ריקה', 'error');
+                return;
+            }
+            
+            if (!selectedPaymentMethod) {
+                showNotification('אנא בחר אמצעי תשלום', 'error');
+                return;
+            }
+            
+            const orderItems = Object.entries(cart).map(([productId, item]) => 
+                `${item.name} x${item.quantity} - ${(item.price * item.quantity).toFixed(2)}₪`
+            ).join('\n');
+            
+            const subtotal = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal + 23; // delivery fee
+            
+            const notes = document.getElementById('orderNotes').value;
+            const isScheduled = document.getElementById('scheduledDelivery').checked;
+            const deliveryTime = document.getElementById('deliveryTime').value;
+            
+            const paymentMethods = {
+                cash: 'מזומן',
+                bit: 'ביט',
+                paybox: 'פייבוקס',
+                credit: 'כרטיס אשראי'
+            };
+            
+            let message = `🛒 הזמנה חדשה מהפינה של רונן\n\n`;
+            message += `📦 פריטים:\n${orderItems}\n\n`;
+            message += `💰 סכום ביניים: ${subtotal.toFixed(2)}₪\n`;
+            message += `🚚 דמי משלוח: 23₪\n`;
+            message += `💳 סה"כ לתשלום: ${total.toFixed(2)}₪\n`;
+            message += `💳 אמצעי תשלום: ${paymentMethods[selectedPaymentMethod]}\n\n`;
+            
+            if (notes) {
+                message += `📝 הערות: ${notes}\n\n`;
+            }
+            
+            if (isScheduled && deliveryTime) {
+                message += `⏰ זמן מועדף: ${new Date(deliveryTime).toLocaleString('he-IL')}\n\n`;
+            }
+            
+            message += `📞 תודה שבחרת בפינה של רונן!`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/972508217759?text=${encodedMessage}`, '_blank');
+            
+            // Update stats
+            dailyStats.orders += 1;
+            dailyStats.revenue += total;
+            dailyStats.profit += Object.entries(cart).reduce((sum, [productId, item]) => {
+                const product = products[productId];
+                return sum + ((product.price - product.cost) * item.quantity);
+            }, 0);
+            
+            saveDailyStats();
+            
+            // Clear cart
+            cart = {};
+            saveCart();
+            updateCartCount();
+            closeModal('cartModal');
+            showNotification('הזמנה נשלחה בהצלחה!', 'success');
+            
+            // Track delivery
+            simulateDelivery();
+        }
+
+        // Simulate delivery tracking
+        function simulateDelivery() {
+            document.getElementById('deliveryTracker').classList.remove('hidden');
+            document.getElementById('deliveryStatus').textContent = 'השליח יצא לדרך...';
+            
+            if (!deliveryMap) {
+                initializeDeliveryMap();
+            }
+            
+            // Simulate delivery progress
+            const statuses = [
+                'השליח קיבל את ההזמנה',
+                'השליח בדרך אליך',
+                'השליח הגיע לבניין',
+                'ההזמנה נמסרה בהצלחה!'
+            ];
+            
+            let currentStatus = 0;
+            const interval = setInterval(() => {
+                if (currentStatus < statuses.length) {
+                    document.getElementById('deliveryStatus').textContent = statuses[currentStatus];
+                    currentStatus++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('deliveryTracker').classList.add('hidden');
+                    }, 3000);
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // Initialize delivery map
+        function initializeDeliveryMap() {
+            const mapElement = document.getElementById('deliveryMap');
+            if (mapElement && typeof L !== 'undefined') {
+                deliveryMap = L.map('deliveryMap').setView([32.1967, 34.8516], 13); // Ra'anana coordinates
                 
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
-                       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        🗺️ Waze
-                    </a>
-                    <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
-                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                        🗺️ Maps
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="py-20 bg-gradient-to-r from-red-600 to-orange-600 text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-5xl font-bold mb-6">ברוכים הבאים לפינה של רונן</h2>
-            <p class="text-2xl mb-8">30 שנה של שירות מעולה ברעננה!</p>
-            <p class="text-lg mb-8">📍 קלאוזנר 2, רעננה • 📞 050-821-1254</p>
-            
-            <div class="grid md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
-                <div class="bg-white/20 p-6 rounded-lg">
-                    <div class="text-4xl mb-4">🍿</div>
-                    <h3 class="font-bold">חטיפים</h3>
-                    <p class="text-sm">מגוון ענק</p>
-                </div>
-                <div class="bg-white/20 p-6 rounded-lg">
-                    <div class="text-4xl mb-4">🥤</div>
-                    <h3 class="font-bold">משקאות</h3>
-                    <p class="text-sm">קרים וחריפים</p>
-                </div>
-                <div class="bg-white/20 p-6 rounded-lg">
-                    <div class="text-4xl mb-4">🎁</div>
-                    <h3 class="font-bold">מארזים</h3>
-                    <p class="text-sm">לכל אירוע</p>
-                </div>
-                <div class="bg-white/20 p-6 rounded-lg">
-                    <div class="text-4xl mb-4">⭐</div>
-                    <h3 class="font-bold">איכות</h3>
-                    <p class="text-sm">30 שנות ניסיון</p>
-                </div>
-            </div>
-            
-            <div class="flex gap-4 justify-center">
-                <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" 
-                        class="bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
-                    🛒 התחל לקנות עכשיו
-                </button>
-                <a href="tel:050-821-1254" 
-                   class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-red-600 transition-colors">
-                    📞 התקשר עכשיו
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section id="products" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-12">🛍️ המוצרים שלנו</h2>
-            
-            <!-- Categories -->
-            <div class="flex gap-2 flex-wrap justify-center mb-8">
-                <button onclick="filterByCategory('הכל')" class="category-btn px-6 py-3 rounded-full font-medium bg-red-600 text-white">
-                    🛍️ הכל
-                </button>
-                <button onclick="filterByCategory('חטיפים')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🍿 חטיפים
-                </button>
-                <button onclick="filterByCategory('שתיה מתוקה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🥤 שתיה מתוקה
-                </button>
-                <button onclick="filterByCategory('שתיה חריפה')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🍺 שתיה חריפה
-                </button>
-                <button onclick="filterByCategory('סיגריות')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🚬 סיגריות
-                </button>
-                <button onclick="filterByCategory('מארזים לחג וימי הולדת')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🎁 מארזים
-                </button>
-                <button onclick="filterByCategory('בלונים וכו')" class="category-btn px-6 py-3 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
-                    🎈 בלונים
-                </button>
-            </div>
-            
-            <!-- Products Grid -->
-            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Products will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-4xl font-bold mb-8">🏆 אודות הפינה של רונן</h2>
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(deliveryMap);
                 
-                <div class="bg-white rounded-3xl p-8 shadow-lg">
-                    <div class="text-6xl mb-6">🏪</div>
-                    <h3 class="text-3xl font-bold text-red-600 mb-6">30 שנה של מסורת ואיכות</h3>
-                    
-                    <p class="text-xl leading-relaxed text-gray-700 mb-8">
-                        מזה <strong class="text-red-600">30 שנה</strong>, הפינה של רונן מספקת שירות מעולה לתושבי רעננה והסביבה. 
-                        אנחנו מתמחים במתן שירות ברמה הגבוהה ביותר עם מוצרים איכותיים במחירים הוגנים והגיוניים.
-                    </p>
-                    
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div class="bg-red-50 rounded-2xl p-6">
-                            <h4 class="text-xl font-bold text-red-600 mb-4">🛍️ המוצרים שלנו</h4>
-                            <ul class="text-right space-y-2 text-gray-700">
-                                <li>🍿 חטיפים מגוון רחב</li>
-                                <li>🥤 שתיה קרה מרעננת</li>
-                                <li>🍺 שתיה חריפה איכותית</li>
-                                <li>🚬 סיגריות ומותגים מובילים</li>
-                                <li>🎈 בלונים וקישוטים</li>
-                                <li>🎁 מארזים מיוחדים לכל אירוע</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="bg-orange-50 rounded-2xl p-6">
-                            <h4 class="text-xl font-bold text-orange-600 mb-4">🌟 מה מייחד אותנו</h4>
-                            <ul class="text-right space-y-2 text-gray-700">
-                                <li>🏆 30 שנות ניסיון ומקצועיות</li>
-                                <li>💎 מוצרים איכותיים בלבד</li>
-                                <li>💰 מחירים הוגנים והגיוניים</li>
-                                <li>😊 שירות ברמה גבוהה</li>
-                                <li>📍 מיקום נוח בלב רעננה</li>
-                                <li>⚡ שירות מהיר ואמין</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                // Add store marker
+                L.marker([32.1967, 34.8516]).addTo(deliveryMap)
+                    .bindPopup('הפינה של רונן')
+                    .openPopup();
+            }
+        }
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 bg-gradient-to-r from-red-600 to-orange-600 text-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-12">📞 צור קשר</h2>
+        // Update dashboard
+        function updateDashboard() {
+            // Update today's stats
+            document.getElementById('todayOrders').textContent = dailyStats.orders;
+            document.getElementById('todayRevenue').textContent = `${dailyStats.revenue.toFixed(2)}₪`;
+            document.getElementById('dailyProfit').textContent = `${dailyStats.profit.toFixed(2)}₪`;
             
-            <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-                <div class="bg-white/10 rounded-2xl p-8">
-                    <h3 class="text-2xl font-bold mb-6">📍 פרטי יצירת קשר</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-center space-x-4 space-x-reverse">
-                            <div class="bg-white/20 p-3 rounded-full">📍</div>
-                            <div>
-                                <h4 class="font-bold text-lg">כתובת</h4>
-                                <p>קלאוזנר 2, רעננה</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 space-x-reverse">
-                            <div class="bg-white/20 p-3 rounded-full">📞</div>
-                            <div>
-                                <h4 class="font-bold text-lg">טלפון</h4>
-                                <a href="tel:050-821-1254" class="hover:underline">050-821-1254</a>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 space-x-reverse">
-                            <div class="bg-white/20 p-3 rounded-full">💬</div>
-                            <div>
-                                <h4 class="font-bold text-lg">WhatsApp</h4>
-                                <a href="https://wa.me/972508211254" class="hover:underline">שלח הודעה</a>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 space-x-reverse">
-                            <div class="bg-white/20 p-3 rounded-full">🕐</div>
-                            <div>
-                                <h4 class="font-bold text-lg">שעות פעילות</h4>
-                                <p>יום-שבת: 06:00-24:00</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 flex gap-4">
-                        <a href="https://waze.com/ul?q=קלאוזנר 2 רעננה&navigate=yes" target="_blank" 
-                           class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-blue-700 transition-colors">
-                            🗺️ נווט ב-Waze
-                        </a>
-                        <a href="https://www.google.com/maps/dir//קלאוזנר+2,+רעננה" target="_blank" 
-                           class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-bold text-center hover:bg-green-700 transition-colors">
-                            🗺️ Google Maps
-                        </a>
+            // Count active deliveries (simulated)
+            document.getElementById('activeDeliveries').textContent = '0';
+            
+            // Count low stock items
+            const lowStockCount = Object.values(products).filter(p => p.stock <= 5 && p.stock > 0).length;
+            document.getElementById('lowStockItems').textContent = lowStockCount;
+            
+            // Update best selling products
+            updateBestSelling();
+            
+            // Update low stock alerts
+            updateLowStockAlerts();
+            
+            // Update weekly chart
+            updateWeeklyChart();
+        }
+
+        // Update best selling products
+        function updateBestSelling() {
+            const bestSelling = Object.entries(products)
+                .sort(([,a], [,b]) => (b.sold || 0) - (a.sold || 0))
+                .slice(0, 5);
+            
+            const container = document.getElementById('bestSelling');
+            
+            if (bestSelling.length === 0) {
+                container.innerHTML = '<div class="text-gray-500">אין מכירות היום</div>';
+                return;
+            }
+            
+            container.innerHTML = bestSelling.map(([id, product]) => `
+                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                    <span class="font-medium">${product.name}</span>
+                    <span class="font-bold text-yellow-600">${product.sold || 0} מכירות</span>
+                </div>
+            `).join('');
+        }
+
+        // Update low stock alerts
+        function updateLowStockAlerts() {
+            const lowStock = Object.entries(products).filter(([,product]) => 
+                product.stock <= 5 && product.stock > 0
+            );
+            
+            const container = document.getElementById('lowStockAlerts');
+            
+            if (lowStock.length === 0) {
+                container.innerHTML = '<div class="text-gray-500">אין התראות מלאי</div>';
+                return;
+            }
+            
+            container.innerHTML = lowStock.map(([id, product]) => `
+                <div class="bg-red-50 border-l-4 border-red-400 p-3 rounded">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">${product.name}</span>
+                        <span class="text-red-600 font-bold">${product.stock} יח' נותרו</span>
                     </div>
                 </div>
+            `).join('');
+        }
+
+        // Update weekly chart
+        function updateWeeklyChart() {
+            const ctx = document.getElementById('weeklyChart');
+            if (ctx && typeof Chart !== 'undefined') {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
+                        datasets: [{
+                            label: 'השבוע הנוכחי',
+                            data: [120, 150, 180, 200, 170, 90, 60],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'השבוע שעבר',
+                            data: [100, 130, 160, 180, 150, 80, 50],
+                            borderColor: 'rgb(156, 163, 175)',
+                            backgroundColor: 'rgba(156, 163, 175, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'מכירות (₪)'
+                                }
+                            }
+                        }
+                    }
+                });
                 
-                <div class="bg-white/10 rounded-2xl p-8">
-                    <h3 class="text-2xl font-bold mb-6">💌 שלח הודעה</h3>
-                    
-                    <form class="space-y-6" onsubmit="sendMessage(event)">
-                        <div>
-                            <label class="block text-sm font-bold mb-2">שם מלא</label>
-                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-bold mb-2">טלפון</label>
-                            <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-bold mb-2">הודעה</label>
-                            <textarea rows="4" required class="w-full px-4 py-3 border border-gray-300
+                // Update trend indicator
+                const thisWeek = 1070;
+                const lastWeek = 950;
+                const trendElement = document.getElementById('weeklyTrend');
+                
+                if (thisWeek > lastWeek) {
+                    const increase = ((thisWeek - lastWeek) / lastWeek * 100).toFixed(1);
+                    trendElement.innerHTML = `<span class="text-green-600">📈 עלייה של ${increase}%</span>`;
+                } else {
+                    const decrease = ((lastWeek - thisWeek) / lastWeek * 100).toFixed(1);
+                    trendElement.innerHTML = `<span class="text-red-600">📉 ירידה של ${decrease}%</span>`;
+                }
+            }
+        }
+
+        // Reset daily stats
+        function resetDailyStats() {
+            dailyStats = {
+                orders: 0,
+                revenue: 0,
+                profit: 0,
+                date: new Date().toDateString()
+            };
+            saveDailyStats();
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Initialize the app when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
